@@ -1,7 +1,11 @@
 package com.example.pro2project.models;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "summoners")
 public class Summoner {
@@ -25,35 +29,4 @@ public class Summoner {
 
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-    public String getSummonerLevel() {
-        return summonerLevel;
-    }
-
-    public void setSummonerLevel(String summonerLevel) {
-        this.summonerLevel = summonerLevel;
-    }
 }
