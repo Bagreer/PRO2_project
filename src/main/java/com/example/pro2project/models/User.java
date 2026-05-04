@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Setter
 @Getter
 @Entity
@@ -14,18 +16,24 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    @Column(unique = true, nullable = false)
+    private String username;
+
+    @Column(nullable = false)
     private String password;
 
-    public User(Long id, String name, String password) {
-        this.id = id;
-        this.name = name;
-        this.password = password;
-    }
+    // VAZBY (Relationships)
 
-    public User() {
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role; // Každý uživatel má jednu roli (např. ROLE_USER)
 
-    }
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Note> notes; // Osobní poznámky uživatele k hráčům[cite: 4]
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<WatchList> watchedSummoners; // Seznam sledovaných vyvolávačů[cite: 4]
 
+    // Konstruktory
+    public User() {}
 }

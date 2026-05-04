@@ -14,6 +14,14 @@ public class WatchList {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user; // Který uživatel sleduje
+
+    @ManyToOne
+    @JoinColumn(name = "summoner_id")
+    private Summoner summoner; // Kterého hráče sleduje
+
     public WatchList(int id) {
         this.id = id;
     }

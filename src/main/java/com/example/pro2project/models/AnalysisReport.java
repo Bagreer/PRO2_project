@@ -17,6 +17,10 @@ public class AnalysisReport {
     private int consistencyScore;
     private int FarmingEfficiency;
 
+    @ManyToOne
+    @JoinColumn(name = "summoner_id")
+    private Summoner summoner;
+
     public AnalysisReport(Long id, int consistencyScore, int farmingEfficiency) {
         this.id = id;
         this.consistencyScore = consistencyScore;

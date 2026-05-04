@@ -16,6 +16,10 @@ public class Note {
     @Column(name = "id")
     private int id;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user; // Autor poznámky[cite: 4]
+
     public Note(int id) {
         this.id = id;
     }
