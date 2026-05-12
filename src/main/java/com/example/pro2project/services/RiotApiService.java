@@ -32,18 +32,21 @@ public class RiotApiService {
     private final SummonerRepository summonerRepository;
     private final ChampionRepository championRepository;
 
+    private final AnalysisService analysisService;
     private final RestTemplate restTemplate;
 
     public RiotApiService(RestTemplate restTemplate,
                           MatchRepository matchRepository,
                           ParticipantRepository participantRepository,
                           SummonerRepository summonerRepository,
-                          ChampionRepository championRepository) {
+                          ChampionRepository championRepository,
+                          AnalysisService analysisService) {
         this.restTemplate = restTemplate;
         this.matchRepository = matchRepository;
         this.participantRepository = participantRepository;
         this.summonerRepository = summonerRepository;
         this.championRepository = championRepository;
+        this.analysisService = analysisService;
     }
 
     public String getPuuid(String gameName, String tagLine) {
@@ -61,7 +64,7 @@ public class RiotApiService {
     }
 
     public List<String> getMatchIds(String puuid) {
-        int count = 20;
+        int count = 100;
         String url = "https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/" +
                 puuid + "/ids?start=0&count=" +
                 count + "&api_key=" + apiKey;
@@ -131,6 +134,7 @@ public class RiotApiService {
                     p.setDeaths(pDto.getDeaths());
                     p.setAssists(pDto.getAssists());
                     p.setTotalDamage(pDto.getTotalDamageDealtToChampions());
+                    p.setTotalMinionsKilled(pDto.getTotalMinionsKilled());
 
                     p.setMatch(match);
                     p.setSummoner(summoner); // Tady zmizí ten NULL v PARTICIPANTS

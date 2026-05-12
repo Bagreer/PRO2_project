@@ -33,6 +33,7 @@ public class Participant {
     private int deaths;
     private int assists;
     private int totalDamage;
+    private int totalMinionsKilled;
 
     public Participant(Long id, int kills, int deaths, int assists, int totalDamage) {
         this.id = id;

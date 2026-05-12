@@ -40,7 +40,8 @@ public class Summoner {
             joinColumns = @JoinColumn(name = "summoner_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    private List<Tag> tags; // Štítky jako "Carry", "Feeder"[cite: 4]
+
+    private List<Tag> tags = new java.util.ArrayList<>();
 
     // Konstruktory
     public Summoner() {}

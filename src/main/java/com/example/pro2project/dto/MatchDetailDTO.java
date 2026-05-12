@@ -28,6 +28,7 @@ public class MatchDetailDTO {
         private int assists;
         private int totalDamageDealtToChampions;
         private int championId;
-        private String win; // Riot vrací "true"/"false" jako string nebo boolean
+        private String win;
+        private int totalMinionsKilled;
     }
 }
