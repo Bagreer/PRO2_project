@@ -19,12 +19,12 @@ public class Match {
 
     private String matchId;
     private int gameDuration;
-    private int gameMode;
+    private String gameMode;
 
     @OneToMany(mappedBy = "match", cascade = CascadeType.ALL)
     private List<Participant> participants; // 10 účastníků zápasu
 
-    public Match(Long id, String matchId, int gameDuration, int gameMode) {
+    public Match(Long id, String matchId, int gameDuration, String gameMode) {
         this.id = id;
         this.matchId = matchId;
         this.gameDuration = gameDuration;

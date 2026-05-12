@@ -19,7 +19,7 @@ public class Summoner {
     @Column(unique = true)
     private String puuid; // Unikátní ID z Riot API pro identifikaci hráče[cite: 3, 10]
 
-    private String name; // Herní jméno vyvolávače[cite: 3, 10]
+    private String name; // Herní jméno vyvolávače
 
     private int summonerLevel;
 

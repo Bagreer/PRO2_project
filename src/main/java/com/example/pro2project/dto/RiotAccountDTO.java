@@ -1,4 +1,4 @@
-package dto;
+package com.example.pro2project.dto;
 
 import lombok.Getter;
 import lombok.Setter;

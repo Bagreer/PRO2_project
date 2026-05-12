@@ -20,8 +20,7 @@ public class Tag {
     private String name;
     private String description;
 
-    @ManyToMany
-    @JoinTable(name = "summoner_tags")
+    @ManyToMany(mappedBy = "tags")
     private List<Summoner> summoners;
 
     public Tag(int id, String name, String description, List<Summoner> summoners) {

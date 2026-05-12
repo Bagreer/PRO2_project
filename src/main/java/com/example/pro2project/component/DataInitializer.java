@@ -31,6 +31,8 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
+        riotApiService.getChampFromDragon();
+
         // 1. DEFINICE ROLÍ
         if (roleRepository.count() == 0) {
             roleRepository.save(new Role("ROLE_ADMIN"));

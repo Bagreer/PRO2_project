@@ -20,7 +20,8 @@ public class MatchDetailDTO {
     @Getter @Setter
     public static class ParticipantDTO {
         private String puuid;
-        private String summonerName;
+        private String riotIdGameName;
+        private String riotIdTagline;
         private int summonerLevel;
         private int kills;
         private int deaths;
