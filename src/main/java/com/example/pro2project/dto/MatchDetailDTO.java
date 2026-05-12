@@ -1,4 +1,4 @@
-package dto;
+package com.example.pro2project.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -21,6 +21,7 @@ public class MatchDetailDTO {
     public static class ParticipantDTO {
         private String puuid;
         private String summonerName;
+        private int summonerLevel;
         private int kills;
         private int deaths;
         private int assists;
