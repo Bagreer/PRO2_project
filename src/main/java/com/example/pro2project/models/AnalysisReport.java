@@ -19,16 +19,11 @@ public class AnalysisReport {
     private int killParticipation;
     private int avgDamage;
     private int winRate;
+    private int visionScore;
 
     @ManyToOne
     @JoinColumn(name = "summoner_id")
     private Summoner summoner;
-
-    public AnalysisReport(Long id, int consistencyScore, int farmingEfficiency) {
-        this.id = id;
-        this.consistencyScore = consistencyScore;
-        FarmingEfficiency = farmingEfficiency;
-    }
 
     public AnalysisReport() {
 
