@@ -44,48 +44,39 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
-        riotApiService.getChampFromDragon();
-
-        // 1. DEFINICE ROLÍ
+        // Nahraj jen číselníky
         if (roleRepository.count() == 0) {
-            roleRepository.save(new Role("ROLE_ADMIN"));
             roleRepository.save(new Role("ROLE_USER"));
+            roleRepository.save(new Role("ROLE_ADMIN"));
         }
 
-        // 2. DEFINICE ANALYTICKÝCH TAGŮ (To, co bude tvá aplikace přiřazovat hráčům)
         if (tagRepository.count() == 0) {
-            tagRepository.save(new Tag("Carry", "Hráč, který dává nejvíce dmg"));
+            tagRepository.save(new Tag("Carry", "Hráč s vysokým poškozením"));
             tagRepository.save(new Tag("Feeder", "Hráč s vysokým počtem úmrtí"));
-            tagRepository.save(new Tag("Farmer", "Hráč s excelentním CS/min"));
-            tagRepository.save(new Tag("Vision King", "Hráč s nejlepším vision score"));
+            tagRepository.save(new Tag("Vision King", "Hráč s výbornou vizí"));
+            // ... další tagy
         }
 
-        // 3. PRVNÍ ADMIN ÚČET (Stále ho potřebuješ pro první login)
-        if (userRepository.findByUsername("admin") == null) {
-            User admin = new User();
-            admin.setUsername("admin");
-            admin.setPassword("heslo123"); // Později vyřešíme BCrypt šifrování
-            admin.setRole(roleRepository.findByName("ROLE_ADMIN"));
-            userRepository.save(admin);
-        }
-
-        String myPuuid = riotApiService.getPuuid("Bagreer", "EUNE");
-        System.out.println(">>> Master Data (Role, Tagy) byla úspěšně zinicializována.");
-        System.out.println("Moje puuid: " + myPuuid);
-        System.out.println("posledni moje hry: " + riotApiService.getMatchIds(myPuuid));
-
-        List<String> matches = riotApiService.getMatchIds(myPuuid);
-
-        for (String match : matches) {
-            riotApiService.downloadAndSaveMatch(match);
-        }
-
-        List<Summoner> allSummoners = summonerRepository.findAll();
-
-        for (Summoner s : allSummoners) {
-            if (s.getPuuid() != null) {
-                analysisService.performAnalysis(s.getPuuid());
-            }
-        }
+        System.out.println(">>> Backend připraven, čekám na vyhledávání...");
     }
+//
+//        String myPuuid = riotApiService.getPuuid("Bagreer", "EUNE");
+//        System.out.println(">>> Master Data (Role, Tagy) byla úspěšně zinicializována.");
+//        System.out.println("Moje puuid: " + myPuuid);
+//        System.out.println("posledni moje hry: " + riotApiService.getMatchIds(myPuuid));
+//
+//        List<String> matches = riotApiService.getMatchIds(myPuuid);
+//
+//        for (String match : matches) {
+//            riotApiService.downloadAndSaveMatch(match);
+//        }
+//
+//        List<Summoner> allSummoners = summonerRepository.findAll();
+//
+//        for (Summoner s : allSummoners) {
+//            if (s.getPuuid() != null) {
+//                analysisService.performAnalysis(s.getPuuid());
+//            }
+//        }
+
 }

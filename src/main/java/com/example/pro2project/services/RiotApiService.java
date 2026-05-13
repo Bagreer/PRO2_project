@@ -137,7 +137,7 @@ public class RiotApiService {
                     p.setTotalMinionsKilled(pDto.getTotalMinionsKilled());
                     p.setVisionScore(pDto.getVisionScore());
 
-                    p.setTeamID(pDto.getTeamId());
+                    p.setTeamId(pDto.getTeamId());
                     p.setWin(pDto.isWin());
 
                     p.setMatch(match);

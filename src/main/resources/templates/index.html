@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>LoL Analyzer - Vyhledávání</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #121212; color: #e0e0e0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .search-container { margin-top: 15vh; }
+        .form-control { background-color: #1e1e1e; border: 1px solid #333; color: white; }
+        .form-control:focus { background-color: #252525; border-color: #0d6efd; color: white; box-shadow: none; }
+        .input-group-text { background-color: #333; border: 1px solid #333; color: #aaa; }
+        .btn-primary { padding-left: 2rem; padding-right: 2rem; }
+    </style>
+</head>
+<body>
+<div class="container search-container text-center">
+    <h1 class="display-4 fw-bold mb-2">LoL Analyzer</h1>
+    <p class="text-secondary mb-5">Zadej herní ID a zjisti, s kým máš tu čest.</p>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <form action="/search" method="get" class="row g-2">
+                <div class="col-8">
+                    <input type="text" name="name" class="form-control form-control-lg"
+                           placeholder="Game Name (např. Bagreer)" required>
+                </div>
+                <div class="col-4">
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-text">#</span>
+                        <input type="text" name="tag" class="form-control"
+                               placeholder="Tag (např. EUNE)" required>
+                    </div>
+                </div>
+                <div class="col-12 mt-3">
+                    <button class="btn btn-primary btn-lg w-100" type="submit">
+                        Analyzovat hráče
+                    </button>
+                </div>
+            </form>
+
+            <div th:if="${error}" class="alert alert-danger mt-4 bg-danger text-white border-0"
+                 th:text="${error}"></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -33,7 +33,7 @@ public class Participant {
     private int deaths;
     private int assists;
     private int totalDamage;
-    private int teamID;
+    private int teamId;
     private int totalMinionsKilled;
     private boolean win;
     private int visionScore;
