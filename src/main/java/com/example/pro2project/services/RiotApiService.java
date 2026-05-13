@@ -64,7 +64,7 @@ public class RiotApiService {
     }
 
     public List<String> getMatchIds(String puuid) {
-        int count = 100;
+        int count = 20;
         String url = "https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/" +
                 puuid + "/ids?start=0&count=" +
                 count + "&api_key=" + apiKey;
@@ -135,6 +135,10 @@ public class RiotApiService {
                     p.setAssists(pDto.getAssists());
                     p.setTotalDamage(pDto.getTotalDamageDealtToChampions());
                     p.setTotalMinionsKilled(pDto.getTotalMinionsKilled());
+                    p.setVisionScore(pDto.getVisionScore());
+
+                    p.setTeamID(pDto.getTeamId());
+                    p.setWin(pDto.isWin());
 
                     p.setMatch(match);
                     p.setSummoner(summoner); // Tady zmizí ten NULL v PARTICIPANTS

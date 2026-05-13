@@ -16,6 +16,9 @@ public class AnalysisReport {
 
     private int consistencyScore;
     private int FarmingEfficiency;
+    private int killParticipation;
+    private int avgDamage;
+    private int winRate;
 
     @ManyToOne
     @JoinColumn(name = "summoner_id")

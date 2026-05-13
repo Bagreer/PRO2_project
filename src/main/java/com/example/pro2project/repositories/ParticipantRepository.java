@@ -1,5 +1,6 @@
 package com.example.pro2project.repositories;
 
+import com.example.pro2project.models.Match;
 import com.example.pro2project.models.Participant;
 import com.example.pro2project.models.Summoner;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,4 +11,6 @@ import java.util.List;
 @Repository
 public interface ParticipantRepository extends JpaRepository<Participant, Long> {
     List<Participant> findBySummoner(Summoner summoner);
+    List<Participant> findByMatch(Match match);
+
 }

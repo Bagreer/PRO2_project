@@ -33,15 +33,10 @@ public class Participant {
     private int deaths;
     private int assists;
     private int totalDamage;
+    private int teamID;
     private int totalMinionsKilled;
-
-    public Participant(Long id, int kills, int deaths, int assists, int totalDamage) {
-        this.id = id;
-        this.kills = kills;
-        this.deaths = deaths;
-        this.assists = assists;
-        this.totalDamage = totalDamage;
-    }
+    private boolean win;
+    private int visionScore;
 
     public Participant() {
 

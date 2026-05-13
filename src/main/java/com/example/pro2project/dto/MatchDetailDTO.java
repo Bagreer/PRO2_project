@@ -28,7 +28,9 @@ public class MatchDetailDTO {
         private int assists;
         private int totalDamageDealtToChampions;
         private int championId;
-        private String win;
+        private boolean win;
         private int totalMinionsKilled;
+        private int teamId;
+        private int visionScore;
     }
 }
