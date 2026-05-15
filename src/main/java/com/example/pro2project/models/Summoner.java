@@ -22,6 +22,7 @@ public class Summoner {
     private String name; // Herní jméno vyvolávače
 
     private int summonerLevel;
+    private int profileIconId;
 
     // VAZBY (Relationships)
 

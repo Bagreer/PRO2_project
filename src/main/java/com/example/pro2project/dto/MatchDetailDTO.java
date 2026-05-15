@@ -15,6 +15,7 @@ public class MatchDetailDTO {
         private long gameDuration;
         private String gameMode;
         private List<ParticipantDTO> participants;
+        private long gameCreation;
     }
 
     @Getter @Setter

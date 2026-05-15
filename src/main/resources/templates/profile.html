@@ -5,7 +5,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .card { background-color: #2b3035; color: white; border: 1px solid #444; }
-        .progress { height: 25px; background-color: #444; }
+        .progress { height: 25px; background-color: #444;}
     </style>
 </head>
 <body class="bg-dark text-light">
@@ -15,6 +15,15 @@
     <div class="row">
         <div class="col-md-4 text-center">
             <div class="card p-4">
+                <div class="position-relative mb-3">
+                    <img th:src="'https://ddragon.leagueoflegends.com/cdn/16.10.1/img/profileicon/' + ${summoner.profileIconId} + '.png'"
+                         class="rounded-circle border border-3 border-primary shadow"
+                         width="120" height="120"
+                         alt="Summoner Icon">
+                    <span class="position-absolute bottom-0 start-50 translate-middle-x badge rounded-pill bg-primary"
+                          th:text="${summoner.summonerLevel}">150</span>
+                </div>
+
                 <h2 th:text="${summoner.name}">Jméno</h2>
                 <p class="text-secondary">Level <span th:text="${summoner.summonerLevel}">0</span></p>
                 <hr>
@@ -71,6 +80,54 @@
                         <small class="text-secondary">Vision Score</small>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card p-4">
+            <h3 class="mb-4">Poslední zápasy</h3>
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle">
+                    <thead>
+                    <tr>
+                        <th>Výsledek</th>
+                        <th>Šampion</th>
+                        <th>Mód</th>
+                        <th>K/D/A</th>
+                        <th>CS</th>
+                        <th>Vize</th>
+                        <th>Datum</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="game : ${recentGames}"
+                        th:classappend="${game.win} ? 'border-start border-4 border-success' : 'border-start border-4 border-danger'">
+
+                        <td th:text="${game.win ? 'VÝHRA' : 'PROHRA'}"
+                            th:class="${game.win ? 'text-success fw-bold' : 'text-danger fw-bold'}"></td>
+
+                        <td>
+                            <img th:src="'https://ddragon.leagueoflegends.com/cdn/14.10.1/img/champion/' + ${game.champion.name} + '.png'"
+                                 width="40" class="rounded-circle me-2"
+                                 onerror="this.src='https://via.placeholder.com/40?text=?'">
+                            <span th:text="${game.champion.name}">ID</span>
+                        </td>
+
+                        <td th:text="${game.match.gameMode}" class="small text-secondary"></td>
+
+                        <td th:text="${game.kills + ' / ' + game.deaths + ' / ' + game.assists}"></td>
+
+                        <td th:text="${game.totalMinionsKilled}"></td>
+
+                        <td th:text="${game.visionScore}"></td>
+
+                        <td th:text="${#temporals.format(game.match.gameCreation, 'dd.MM.yyyy HH:mm')}"></td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

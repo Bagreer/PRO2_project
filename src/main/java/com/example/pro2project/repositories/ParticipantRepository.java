@@ -12,5 +12,5 @@ import java.util.List;
 public interface ParticipantRepository extends JpaRepository<Participant, Long> {
     List<Participant> findBySummoner(Summoner summoner);
     List<Participant> findByMatch(Match match);
-
+    List<Participant> findBySummonerOrderById(Summoner summoner);
 }

@@ -1,7 +1,10 @@
 package com.example.pro2project.controllers;
 
 import com.example.pro2project.models.AnalysisReport;
+import com.example.pro2project.models.Participant;
 import com.example.pro2project.models.Summoner;
+import com.example.pro2project.repositories.ChampionRepository;
+import com.example.pro2project.repositories.ParticipantRepository;
 import com.example.pro2project.repositories.SummonerRepository;
 import com.example.pro2project.repositories.AnalysisReportRepository;
 import com.example.pro2project.services.AnalysisService;
@@ -20,15 +23,20 @@ public class WebController {
     private final AnalysisReportRepository analysisReportRepository;
     private final RiotApiService riotApiService;
     private final AnalysisService analysisService;
+    private final ParticipantRepository participantRepository;
 
     public WebController(SummonerRepository summonerRepository,
                          AnalysisReportRepository analysisReportRepository,
                          RiotApiService riotApiService,
-                         AnalysisService analysisService) {
+                         AnalysisService analysisService,
+                         ChampionRepository championRepository,
+                         ParticipantRepository participantRepository) {
         this.summonerRepository = summonerRepository;
         this.analysisReportRepository = analysisReportRepository;
         this.riotApiService = riotApiService;
         this.analysisService = analysisService;
+//        this.championRepository = championRepository;
+        this.participantRepository = participantRepository;
     }
 
     // Úvodní stránka s vyhledávacím polem
@@ -69,9 +77,15 @@ public class WebController {
         // 6. Pokud summoner existuje (buď byl v DB, nebo jsme ho právě vytvořili), ukážeme profil
         if (summoner != null) {
             AnalysisReport report = analysisReportRepository.findBySummoner(summoner);
+
+            // Vytáhneme historii her (všech módů)
+            List<Participant> recentGames = participantRepository.findBySummonerOrderById(summoner);
+
             model.addAttribute("summoner", summoner);
-            model.addAttribute("report", report);
+            model.addAttribute("report", report); // Může být null, ošetříme v HTML
             model.addAttribute("tags", summoner.getTags());
+            model.addAttribute("recentGames", recentGames); // Přidáno do modelu
+
             return "profile";
         }
 

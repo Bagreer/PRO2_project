@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +27,9 @@ public class RiotApiService {
 
     @Value("${riot.api.key}")
     private String apiKey;
+
+    @Value("${riot.version}")
+    private String version;
 
     private final MatchRepository matchRepository;
     private final ParticipantRepository participantRepository;
@@ -53,6 +57,7 @@ public class RiotApiService {
         // Pozor: Riot teď vyžaduje volání přes /account/v1/accounts/by-riot-id/
         String url = "https://europe.api.riotgames.com/riot/account/v1/accounts/by-riot-id/"
                 + gameName + "/" + tagLine + "?api_key=" + apiKey;
+        System.out.println("url: " + url);
 
         try {
             RiotAccountDTO account = restTemplate.getForObject(url, RiotAccountDTO.class);
@@ -100,6 +105,20 @@ public class RiotApiService {
                 } else {
                     match.setGameMode(mode);
                 }
+
+                long timestamp = dto.getInfo().getGameCreation();
+                LocalDateTime dateTime = LocalDateTime.ofInstant(
+                        java.time.Instant.ofEpochMilli(timestamp),
+                        java.time.ZoneId.systemDefault()
+                );
+
+                match.setGameCreation(dateTime);
+
+
+                match.getGameCreation();
+
+
+
                 match = matchRepository.save(match);
 
                 for (MatchDetailDTO.ParticipantDTO pDto : dto.getInfo().getParticipants()) {
@@ -157,7 +176,7 @@ public class RiotApiService {
     @Transactional
     public void getChampFromDragon() {
         // URL pro verzi 14.9.1 (Riot verze občas mění, ale tato je teď stabilní)
-        String url = "https://ddragon.leagueoflegends.com/cdn/14.9.1/data/en_US/champion.json";
+        String url = "https://ddragon.leagueoflegends.com/cdn/" + version + "/data/en_US/champion.json";
         System.out.println("Using URL: " + url);
 
         try {

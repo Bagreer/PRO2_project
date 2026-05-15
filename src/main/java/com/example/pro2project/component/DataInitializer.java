@@ -57,9 +57,11 @@ public class DataInitializer implements CommandLineRunner {
             // ... další tagy
         }
 
+        riotApiService.getChampFromDragon();
+
         System.out.println(">>> Backend připraven, čekám na vyhledávání...");
     }
-//
+
 //        String myPuuid = riotApiService.getPuuid("Bagreer", "EUNE");
 //        System.out.println(">>> Master Data (Role, Tagy) byla úspěšně zinicializována.");
 //        System.out.println("Moje puuid: " + myPuuid);
@@ -78,5 +80,4 @@ public class DataInitializer implements CommandLineRunner {
 //                analysisService.performAnalysis(s.getPuuid());
 //            }
 //        }
-
 }

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Setter
@@ -20,6 +21,7 @@ public class Match {
     private String matchId;
     private int gameDuration;
     private String gameMode;
+    private LocalDateTime gameCreation;
 
     @OneToMany(mappedBy = "match", cascade = CascadeType.ALL)
     private List<Participant> participants; // 10 účastníků zápasu

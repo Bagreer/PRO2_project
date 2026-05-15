@@ -4,7 +4,11 @@ import com.example.pro2project.models.Champion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ChampionRepository extends JpaRepository<Champion, Long> {
     Champion findByChampionId(int championId);
+
+    List<Champion> findByNameContainingIgnoreCase(String search);
 }

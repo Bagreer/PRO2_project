@@ -10,5 +10,5 @@ public class RiotAccountDTO {
     private String puuid;
     private String gameName;
     private String tagLine;
-
+    private int profileIconId;
 }
