@@ -1,30 +1,27 @@
 package com.example.pro2project.models;
 
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter
 @Getter
+@Setter
 @Entity
 @Table(name = "notes")
 public class Note {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private int id;
+    private Integer id;
+
+    @Column(columnDefinition = "TEXT")
+    private String text;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user; // Autor poznámky[cite: 4]
+    private User user;
 
-    public Note(int id) {
-        this.id = id;
-    }
-
-    public Note() {
-
-    }
+    @ManyToOne
+    @JoinColumn(name = "summoner_id")
+    private Summoner summoner;
 }

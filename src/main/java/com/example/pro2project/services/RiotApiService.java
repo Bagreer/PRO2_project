@@ -135,6 +135,7 @@ public class RiotApiService {
                         summoner.setName("Unknown");
                     }
 
+                    summoner.setIconId(pDto.getProfileIcon());
                     summoner.setSummonerLevel(pDto.getSummonerLevel());
                     summoner = summonerRepository.save(summoner);
 

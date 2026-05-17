@@ -23,6 +23,7 @@ public class MatchDetailDTO {
         private String puuid;
         private String riotIdGameName;
         private String riotIdTagline;
+        private String profileIcon;
         private int summonerLevel;
         private int kills;
         private int deaths;

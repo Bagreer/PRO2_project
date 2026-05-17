@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>LoL Analytics - Registrace</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #121212; color: #f8f9fa; }
+        .auth-card { background-color: #1e1e1e; border: 1px solid #2d2d2d; border-radius: 12px; }
+    </style>
+</head>
+<body class="d-flex align-items-center min-vh-100">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card auth-card p-4 shadow">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold text-primary">Vytvořit účet</h2>
+                    <p class="text-secondary">Získejte přístup k pokročilé analytice</p>
+                </div>
+
+                <div th:if="${error}" class="alert alert-danger text-center py-2" th:text="${error}" role="alert">
+                    Chyba při registraci.
+                </div>
+
+                <form th:action="@{/register}" method="post">
+                    <div class="mb-3">
+                        <label for="username" class="form-label small text-secondary">Uživatelské jméno</label>
+                        <input type="text" id="username" name="username" class="form-control bg-dark text-white border-secondary" required minlength="3">
+                    </div>
+                    <div class="mb-4">
+                        <label for="password" class="form-label small text-secondary">Heslo</label>
+                        <input type="password" id="password" name="password" class="form-control bg-dark text-white border-secondary" required minlength="4">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 fw-bold py-2 mb-3">Zaregistrovat se</button>
+                </form>
+
+                <div class="text-center small">
+                    <span class="text-secondary">Už máte účet? </span>
+                    <a th:href="@{/login}" class="text-primary text-decoration-none fw-bold">Přihlásit se</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

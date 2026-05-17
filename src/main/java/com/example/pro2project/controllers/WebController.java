@@ -1,19 +1,16 @@
 package com.example.pro2project.controllers;
 
-import com.example.pro2project.models.AnalysisReport;
-import com.example.pro2project.models.Participant;
-import com.example.pro2project.models.Summoner;
-import com.example.pro2project.repositories.ChampionRepository;
-import com.example.pro2project.repositories.ParticipantRepository;
-import com.example.pro2project.repositories.SummonerRepository;
-import com.example.pro2project.repositories.AnalysisReportRepository;
+import com.example.pro2project.models.*;
+import com.example.pro2project.repositories.*;
 import com.example.pro2project.services.AnalysisService;
 import com.example.pro2project.services.RiotApiService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -24,19 +21,29 @@ public class WebController {
     private final RiotApiService riotApiService;
     private final AnalysisService analysisService;
     private final ParticipantRepository participantRepository;
+    private final ChampionRepository championRepository;
+    private final UserRepository userRepository;
+    private final WatchListRepository watchListRepository;
+    private final NoteRepository noteRepository;
 
     public WebController(SummonerRepository summonerRepository,
                          AnalysisReportRepository analysisReportRepository,
                          RiotApiService riotApiService,
                          AnalysisService analysisService,
                          ChampionRepository championRepository,
-                         ParticipantRepository participantRepository) {
+                         ParticipantRepository participantRepository,
+                         UserRepository userRepository,
+                         WatchListRepository watchListRepository,
+                         NoteRepository noteRepository) {
         this.summonerRepository = summonerRepository;
         this.analysisReportRepository = analysisReportRepository;
         this.riotApiService = riotApiService;
         this.analysisService = analysisService;
-//        this.championRepository = championRepository;
+        this.championRepository = championRepository;
         this.participantRepository = participantRepository;
+        this.userRepository = userRepository;
+        this.watchListRepository = watchListRepository;
+        this.noteRepository = noteRepository;
     }
 
     // Úvodní stránka s vyhledávacím polem
@@ -46,7 +53,7 @@ public class WebController {
     }
 
     @GetMapping("/search")
-    public String searchPlayer(@RequestParam String name, @RequestParam String tag, Model model) {
+    public String searchPlayer(@RequestParam String name, @RequestParam String tag, Model model, Principal principal) {
         // 1. Zkusíme, jestli už jsme ho náhodou nehledali dřív (je v DB)
         Summoner summoner = summonerRepository.findByName(name);
 
@@ -74,9 +81,12 @@ public class WebController {
             }
         }
 
-        // 6. Pokud summoner existuje (buď byl v DB, nebo jsme ho právě vytvořili), ukážeme profil
         if (summoner != null) {
             AnalysisReport report = analysisReportRepository.findBySummoner(summoner);
+
+            User user = userRepository.findByUsername(principal.getName());
+            Note existingNote = noteRepository.findByUserAndSummoner(user, summoner);
+            model.addAttribute("note", existingNote != null ? existingNote.getText() : "");
 
             // Vytáhneme historii her (všech módů)
             List<Participant> recentGames = participantRepository.findBySummonerOrderById(summoner);
@@ -91,5 +101,39 @@ public class WebController {
 
         model.addAttribute("error", "Hráč nebyl nalezen.");
         return "index";
+    }
+
+    @PostMapping("/watchlist/add")
+    public String addToWatchList(@RequestParam Long summonerId, Principal principal) {
+        User user = userRepository.findByUsername(principal.getName());
+        Summoner summoner = summonerRepository.findById(summonerId).orElse(null);
+
+        if (user != null && summoner != null && !watchListRepository.existsByUserAndSummoner(user, summoner)) {
+            WatchList wl = new WatchList();
+            wl.setUser(user);
+            wl.setSummoner(summoner);
+            watchListRepository.save(wl);
+        }
+        return "redirect:/search?name=" + summoner.getName() + "&tag=EUNE"; // vrátí tě to zpět na profil (případně uprav podle tvého tagu)
+    }
+
+    @PostMapping("/notes/save")
+    public String saveNote(@RequestParam Long summonerId, @RequestParam String text, Principal principal) {
+        User user = userRepository.findByUsername(principal.getName());
+        Summoner summoner = summonerRepository.findById(summonerId).orElse(null);
+
+        if (user != null && summoner != null) {
+            Note note = noteRepository.findByUserAndSummoner(user, summoner);
+            if (note == null) {
+                note = new Note();
+                note.setUser(user);
+                note.setSummoner(summoner);
+            }
+            note.setText(text);
+            System.out.println("NOTE SAVED");
+            noteRepository.save(note);
+        }
+        // Vrátí tě to zpět na profil toho stejného hráče
+        return "redirect:/search?name=" + (summoner != null ? summoner.getName() : "") + "&tag=EUNE";
     }
 }

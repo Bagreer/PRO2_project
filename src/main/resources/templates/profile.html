@@ -14,30 +14,46 @@
 
     <div class="row">
         <div class="col-md-4 text-center">
-            <div class="card p-4">
-                <div class="position-relative mb-3">
-                    <img th:src="'https://ddragon.leagueoflegends.com/cdn/16.10.1/img/profileicon/' + ${summoner.profileIconId} + '.png'"
-                         class="rounded-circle border border-3 border-primary shadow"
-                         width="120" height="120"
-                         alt="Summoner Icon">
-                    <span class="position-absolute bottom-0 start-50 translate-middle-x badge rounded-pill bg-primary"
-                          th:text="${summoner.summonerLevel}">150</span>
-                </div>
+            <div class="card p-4 h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <div class="position-relative mb-3">
+                        <img th:src="'https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/' + ${summoner.iconId} + '.png'"
+                             class="rounded-circle border border-3 border-primary shadow"
+                             width="100" height="100"
+                             alt="Profilovka">
+                    </div>
 
-                <h2 th:text="${summoner.name}">Jméno</h2>
-                <p class="text-secondary">Level <span th:text="${summoner.summonerLevel}">0</span></p>
-                <hr>
-                <h5>Tagy:</h5>
-                <div class="mt-2">
+                    <h2 th:text="${summoner.name}">Jméno</h2>
+                    <p class="text-secondary mb-2">Level <span th:text="${summoner.summonerLevel}">0</span></p>
+
+                    <form th:action="@{/watchlist/add}" method="post" class="mb-3">
+                        <input type="hidden" name="summonerId" th:value="${summoner.id}">
+                        <button type="submit" class="btn btn-warning btn-sm fw-bold w-100">⭐ Sledovat hráče</button>
+                    </form>
+
+                    <hr>
+                    <h5>Tagy:</h5>
+                    <div class="mt-2 mb-3">
                         <span th:each="tag : ${tags}"
                               class="badge rounded-pill bg-info text-dark m-1"
                               th:text="${tag.name}">Tag</span>
+                    </div>
+                </div>
+
+                <div class="mt-auto pt-3 border-top text-start">
+                    <h6 class="text-primary fw-bold">Moje poznámka k hráči:</h6>
+                    <form th:action="@{/notes/save}" method="post">
+                        <input type="hidden" name="summonerId" th:value="${summoner.id}">
+                        <textarea name="text" class="form-control bg-dark text-white border-secondary mb-2 small" rows="3"
+                                  placeholder="Např. Dobrý support, ale často tiltuje..." th:text="${note}"></textarea>
+                        <button type="submit" class="btn btn-primary btn-sm w-100">Uložit poznámku</button>
+                    </form>
                 </div>
             </div>
-        </div>
+        </div>x
 
         <div class="col-md-8">
-            <div class="card p-4">
+            <div class="card p-4 h-100">
                 <h3>Analýza výkonu</h3>
                 <hr>
 
@@ -83,54 +99,53 @@
             </div>
         </div>
     </div>
-</div>
 
-<div class="row mt-4">
-    <div class="col-12">
-        <div class="card p-4">
-            <h3 class="mb-4">Poslední zápasy</h3>
-            <div class="table-responsive">
-                <table class="table table-dark table-hover align-middle">
-                    <thead>
-                    <tr>
-                        <th>Výsledek</th>
-                        <th>Šampion</th>
-                        <th>Mód</th>
-                        <th>K/D/A</th>
-                        <th>CS</th>
-                        <th>Vize</th>
-                        <th>Datum</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="game : ${recentGames}"
-                        th:classappend="${game.win} ? 'border-start border-4 border-success' : 'border-start border-4 border-danger'">
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card p-4">
+                <h3 class="mb-4">Poslední zápasy</h3>
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover align-middle">
+                        <thead>
+                        <tr>
+                            <th>Result</th>
+                            <th>Champion</th>
+                            <th>Mode</th>
+                            <th>KDA</th>
+                            <th>CS</th>
+                            <th>Vision</th>
+                            <th>Date</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="game : ${recentGames}"
+                            th:classappend="${game.win} ? 'border-start border-4 border-success' : 'border-start border-4 border-danger'">
 
-                        <td th:text="${game.win ? 'VÝHRA' : 'PROHRA'}"
-                            th:class="${game.win ? 'text-success fw-bold' : 'text-danger fw-bold'}"></td>
+                            <td th:text="${game.win ? 'WIN' : 'LOSS'}"
+                                th:class="${game.win ? 'text-success fw-bold' : 'text-danger fw-bold'}"></td>
 
-                        <td>
-                            <img th:src="'https://ddragon.leagueoflegends.com/cdn/14.10.1/img/champion/' + ${game.champion.name} + '.png'"
-                                 width="40" class="rounded-circle me-2"
-                                 onerror="this.src='https://via.placeholder.com/40?text=?'">
-                            <span th:text="${game.champion.name}">ID</span>
-                        </td>
+                            <td>
+                                <img th:src="'https://ddragon.leagueoflegends.com/cdn/14.10.1/img/champion/' + ${game.champion.name} + '.png'"
+                                     width="40" class="rounded-circle me-2"
+                                     onerror="this.src='https://via.placeholder.com/40?text=?'">
+                                <span th:text="${game.champion.name}">ID</span>
+                            </td>
 
-                        <td th:text="${game.match.gameMode}" class="small text-secondary"></td>
+                            <td th:text="${game.match.gameMode}" class="small text-secondary"></td>
 
-                        <td th:text="${game.kills + ' / ' + game.deaths + ' / ' + game.assists}"></td>
+                            <td th:text="${game.kills + ' / ' + game.deaths + ' / ' + game.assists}"></td>
 
-                        <td th:text="${game.totalMinionsKilled}"></td>
+                            <td th:text="${game.totalMinionsKilled}"></td>
 
-                        <td th:text="${game.visionScore}"></td>
+                            <td th:text="${game.visionScore}"></td>
 
-                        <td th:text="${#temporals.format(game.match.gameCreation, 'dd.MM.yyyy HH:mm')}"></td>
-                    </tr>
-                    </tbody>
-                </table>
+                            <td th:text="${#temporals.format(game.match.gameCreation, 'dd.MM.yyyy')}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-</div>
-</body>
+</div> </body>
 </html>

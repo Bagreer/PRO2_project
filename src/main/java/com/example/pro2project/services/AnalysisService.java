@@ -33,7 +33,7 @@ public class AnalysisService {
 
         // 1. Získání pouze klasických her
         List<Participant> classicGames = participantRepository.findBySummoner(summoner).stream()
-                .filter(p -> "CLASSIC".equalsIgnoreCase(p.getMatch().getGameMode()))
+//                .filter(p -> "CLASSIC".equalsIgnoreCase(p.getMatch().getGameMode()))
                 .toList();
 
         if (classicGames.isEmpty()) return;
