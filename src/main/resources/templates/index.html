@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <title>LoL Analyzer - Vyhledávání</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background-color: #121212; color: #e0e0e0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .search-container { margin-top: 15vh; }
+        .search-container { margin-top: 5vh; }
         .form-control { background-color: #1e1e1e; border: 1px solid #333; color: white; }
         .form-control:focus { background-color: #252525; border-color: #0d6efd; color: white; box-shadow: none; }
         .input-group-text { background-color: #333; border: 1px solid #333; color: #aaa; }
@@ -13,6 +14,18 @@
     </style>
 </head>
 <body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold text-primary" href="/">✨ LoL Analyzer</a>
+        <div class="ms-auto d-flex align-items-center">
+            <form th:action="@{/logout}" method="post" class="m-0">
+                <button type="submit" class="btn btn-outline-danger btn-sm fw-bold">Odhlásit se</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
 <div class="container search-container text-center">
     <h1 class="display-4 fw-bold mb-2">LoL Analyzer</h1>
     <p class="text-secondary mb-5">Zadej herní ID a zjisti, s kým máš tu čest.</p>
@@ -32,15 +45,49 @@
                     </div>
                 </div>
                 <div class="col-12 mt-3">
-                    <button class="btn btn-primary btn-lg w-100" type="submit">
+                    <button class="btn btn-primary btn-lg w-100 fw-bold" type="submit">
                         Analyzovat hráče
                     </button>
                 </div>
             </form>
 
-            <div th:if="${error}" class="alert alert-danger mt-4 bg-danger text-white border-0"
-                 th:text="${error}"></div>
+            <div th:if="${error}" class="alert alert-danger mt-4 bg-danger text-white border-0" th:text="${error}"></div>
         </div>
+    </div>
+
+    <div class="row mt-5 justify-content-center" th:if="${watchlist != null or myNotes != null}">
+
+        <div class="col-md-5 mb-4 text-start" th:if="${watchlist != null and !watchlist.isEmpty()}">
+            <h4 class="text-warning mb-3">⭐ Sledovaní hráči</h4>
+            <div class="list-group">
+                <div th:each="item : ${watchlist}"
+                     class="list-group-item bg-dark border-secondary d-flex justify-content-between align-items-center mb-2 rounded p-2">
+
+                    <a th:href="@{/search(name=${item.summoner.name}, tag='EUNE')}" class="text-white text-decoration-none flex-grow-1">
+                        <strong th:text="${item.summoner.name}">Jméno</strong>
+                        <span class="text-secondary small ms-1" th:text="'(Lvl ' + ${item.summoner.summonerLevel} + ')'">Lvl</span>
+                    </a>
+
+                    <form th:action="@{/watchlist/delete}" method="post" class="m-0">
+                        <input type="hidden" name="summonerId" th:value="${item.summoner.id}">
+                        <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-2 fw-bold" style="font-size: 0.8rem;">Odebrat</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5 mb-4 text-start" th:if="${myNotes != null and !myNotes.isEmpty()}">
+            <h4 class="text-primary mb-3">📝 Moje uložené poznámky</h4>
+            <div class="list-group">
+                <div th:each="note : ${myNotes}" class="list-group-item bg-dark text-white border-secondary mb-2 rounded p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <a th:href="@{/search(name=${note.summoner.name}, tag='EUNE')}" class="text-info fw-bold text-decoration-none" th:text="${note.summoner.name}">Hráč</a>
+                    </div>
+                    <p class="mb-0 small text-secondary" th:text="${note.text}">Text poznámky</p>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 </body>

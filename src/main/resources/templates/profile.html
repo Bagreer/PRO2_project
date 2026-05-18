@@ -6,9 +6,24 @@
     <style>
         .card { background-color: #2b3035; color: white; border: 1px solid #444; }
         .progress { height: 25px; background-color: #444;}
+        .small { color: white;}
     </style>
 </head>
 <body class="bg-dark text-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold text-primary" href="/">✨ LoL Analyzer</a>
+        <div class="ms-auto d-flex align-items-center">
+            <form th:action="@{/logout}" method="post" class="m-0">
+                <button type="submit" class="btn btn-outline-danger btn-sm fw-bold">Odhlásit se</button>
+            </form>
+        </div>
+    </div>
+</nav>
+<div th:if="${param.noteSaved}" class="alert alert-success alert-dismissible fade show text-center fw-bold mb-4 border-start border-4 border-success bg-dark text-success" role="alert">
+    ✨ Poznámka byla úspěšně uložena do tvé databáze!
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
 <div class="container mt-5">
     <a href="/" class="btn btn-outline-secondary mb-3">← Zpět na vyhledávání</a>
 
@@ -50,7 +65,7 @@
                     </form>
                 </div>
             </div>
-        </div>x
+        </div>
 
         <div class="col-md-8">
             <div class="card p-4 h-100">
@@ -104,45 +119,41 @@
         <div class="col-12">
             <div class="card p-4">
                 <h3 class="mb-4">Poslední zápasy</h3>
-                <div class="table-responsive">
-                    <table class="table table-dark table-hover align-middle">
-                        <thead>
-                        <tr>
-                            <th>Result</th>
-                            <th>Champion</th>
-                            <th>Mode</th>
-                            <th>KDA</th>
-                            <th>CS</th>
-                            <th>Vision</th>
-                            <th>Date</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="game : ${recentGames}"
-                            th:classappend="${game.win} ? 'border-start border-4 border-success' : 'border-start border-4 border-danger'">
+                <div class="row row-cols-1 row-cols-md-2 g-3">
+                    <div class="col" th:each="game : ${recentGames}">
+                        <div class="card h-100"
+                             th:classappend="${game.win} ? 'border-start border-4 border-success' : 'border-start border-4 border-danger'">
+                            <div class="card-body d-flex align-items-center justify-content-between">
 
-                            <td th:text="${game.win ? 'WIN' : 'LOSS'}"
-                                th:class="${game.win ? 'text-success fw-bold' : 'text-danger fw-bold'}"></td>
+                                <div class="d-flex align-items-center">
+                                    <img th:src="'https://ddragon.leagueoflegends.com/cdn/14.10.1/img/champion/' + ${game.champion.name} + '.png'"
+                                         width="50" height="50" class="rounded-circle me-3"
+                                         onerror="this.src='https://via.placeholder.com/50?text=?'">
+                                    <div>
+                                        <h5 class="card-title mb-0" th:text="${game.champion.name}">Champion</h5>
+                                        <small class="text-secondary" th:text="${game.match.gameMode}">Mode</small>
+                                    </div>
+                                </div>
 
-                            <td>
-                                <img th:src="'https://ddragon.leagueoflegends.com/cdn/14.10.1/img/champion/' + ${game.champion.name} + '.png'"
-                                     width="40" class="rounded-circle me-2"
-                                     onerror="this.src='https://via.placeholder.com/40?text=?'">
-                                <span th:text="${game.champion.name}">ID</span>
-                            </td>
+                                <div class="text-center">
+                    <span class="fw-bold d-block"
+                          th:text="${game.kills + ' / ' + game.deaths + ' / ' + game.assists}"
+                          th:classappend="${game.win} ? 'text-success' : 'text-danger'">KDA</span>
+                                    <small class="text-secondary" th:text="${game.totalMinionsKilled} + ' CS'"></small>
+                                </div>
 
-                            <td th:text="${game.match.gameMode}" class="small text-secondary"></td>
+                                <div>
+                                    <a th:href="@{/match/{id}(id=${game.match.id})}" class="btn btn-outline-light btn-sm">
+                                        Detail →
+                                    </a>
+                                </div>
 
-                            <td th:text="${game.kills + ' / ' + game.deaths + ' / ' + game.assists}"></td>
-
-                            <td th:text="${game.totalMinionsKilled}"></td>
-
-                            <td th:text="${game.visionScore}"></td>
-
-                            <td th:text="${#temporals.format(game.match.gameCreation, 'dd.MM.yyyy')}"></td>
-                        </tr>
-                        </tbody>
-                    </table>
+                            </div>
+                            <div class="card-footer bg-transparent border-0 pt-0 text-end">
+                                <small class="text-muted small" th:text="${#temporals.format(game.match.gameCreation, 'dd.MM.yyyy')}"></small>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

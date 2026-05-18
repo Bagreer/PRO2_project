@@ -7,6 +7,7 @@ import com.example.pro2project.services.RiotApiService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable; // PŘIDÁN IMPORT PRO DETAIL ZÁPASU
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -25,6 +26,7 @@ public class WebController {
     private final UserRepository userRepository;
     private final WatchListRepository watchListRepository;
     private final NoteRepository noteRepository;
+    private final MatchRepository matchRepository; // PŘIDÁNO: Repozitář pro zápasy
 
     public WebController(SummonerRepository summonerRepository,
                          AnalysisReportRepository analysisReportRepository,
@@ -34,7 +36,8 @@ public class WebController {
                          ParticipantRepository participantRepository,
                          UserRepository userRepository,
                          WatchListRepository watchListRepository,
-                         NoteRepository noteRepository) {
+                         NoteRepository noteRepository,
+                         MatchRepository matchRepository) { // PŘIDÁNO DO KONSTRUKTORU
         this.summonerRepository = summonerRepository;
         this.analysisReportRepository = analysisReportRepository;
         this.riotApiService = riotApiService;
@@ -44,12 +47,21 @@ public class WebController {
         this.userRepository = userRepository;
         this.watchListRepository = watchListRepository;
         this.noteRepository = noteRepository;
+        this.matchRepository = matchRepository; // PŘIDÁNO DO KONSTRUKTORU
     }
 
-    // Úvodní stránka s vyhledávacím polem
+    // Úvodní stránka s vyhledávacím polem - UPRAVENO PRO WATCHLIST A POZNÁMKY
     @GetMapping("/")
-    public String index() {
-        return "index"; // Vytvoříš index.html v templates
+    public String index(Model model, Principal principal) {
+        // Pokud je uživatel přihlášený, vytáhneme jeho watchlist a poznámky
+        if (principal != null) {
+            User user = userRepository.findByUsername(principal.getName());
+            if (user != null) {
+                model.addAttribute("watchlist", watchListRepository.findByUser(user));
+                model.addAttribute("myNotes", noteRepository.findByUser(user));
+            }
+        }
+        return "index";
     }
 
     @GetMapping("/search")
@@ -92,9 +104,9 @@ public class WebController {
             List<Participant> recentGames = participantRepository.findBySummonerOrderById(summoner);
 
             model.addAttribute("summoner", summoner);
-            model.addAttribute("report", report); // Může být null, ošetříme v HTML
+            model.addAttribute("report", report);
             model.addAttribute("tags", summoner.getTags());
-            model.addAttribute("recentGames", recentGames); // Přidáno do modelu
+            model.addAttribute("recentGames", recentGames);
 
             return "profile";
         }
@@ -114,7 +126,7 @@ public class WebController {
             wl.setSummoner(summoner);
             watchListRepository.save(wl);
         }
-        return "redirect:/search?name=" + summoner.getName() + "&tag=EUNE"; // vrátí tě to zpět na profil (případně uprav podle tvého tagu)
+        return "redirect:/search?name=" + summoner.getName() + "&tag=EUNE";
     }
 
     @PostMapping("/notes/save")
@@ -133,7 +145,40 @@ public class WebController {
             System.out.println("NOTE SAVED");
             noteRepository.save(note);
         }
-        // Vrátí tě to zpět na profil toho stejného hráče
         return "redirect:/search?name=" + (summoner != null ? summoner.getName() : "") + "&tag=EUNE";
+    }
+
+    // PŘIDÁNO: Endpoint pro rozkliknutí detailu konkrétního zápasu
+    @GetMapping("/match/{id}")
+    public String matchDetail(@PathVariable Long id, Model model) {
+        Match match = matchRepository.findById(id).orElse(null);
+        if (match == null) {
+            return "redirect:/"; // Pokud zápas neexistuje, hodí nás to na hlavní stránku
+        }
+
+        // Vytáhneme všech 10 účastníků (particapantů), kteří v tomto zápase hráli
+        List<Participant> participants = participantRepository.findByMatch(match);
+
+        model.addAttribute("match", match);
+        model.addAttribute("participants", participants);
+        return "match"; // Otevře match.html
+    }
+
+    @PostMapping("/watchlist/delete")
+    public String deleteFromWatchList(@RequestParam Long summonerId, Principal principal) {
+        User user = userRepository.findByUsername(principal.getName());
+        Summoner summoner = summonerRepository.findById(summonerId).orElse(null);
+
+        if (user != null && summoner != null) {
+            // Najdeme konkrétní položku ve watchlistu tohoto uživatele a smažeme ji
+            List<WatchList> watchlist = watchListRepository.findByUser(user);
+            for (WatchList item : watchlist) {
+                if (item.getSummoner().getId().equals(summonerId)) {
+                    watchListRepository.delete(item);
+                    break; // Záznam smazán, můžeme vyskočit z cyklu
+                }
+            }
+        }
+        return "redirect:/"; // Vrátí nás zpět na pročištěnou hlavní stránku
     }
 }
