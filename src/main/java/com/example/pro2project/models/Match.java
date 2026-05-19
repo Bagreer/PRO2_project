@@ -24,7 +24,7 @@ public class Match {
     private LocalDateTime gameCreation;
 
     @OneToMany(mappedBy = "match", cascade = CascadeType.ALL)
-    private List<Participant> participants; // 10 účastníků zápasu
+    private List<Participant> participants;
 
     public Match(Long id, String matchId, int gameDuration, String gameMode) {
         this.id = id;

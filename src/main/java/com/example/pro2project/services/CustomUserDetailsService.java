@@ -23,13 +23,12 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("Uživatel nenalezen: " + username);
         }
 
-        // Vytáhneme tu jednu roli, kterou má uživatel přiřazenou
         String roleName = user.getRole() != null ? user.getRole().getName() : "USER";
 
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getUsername())
                 .password(user.getPassword())
-                .roles(roleName) // Spring Security automaticky přidá předponu "ROLE_"
+                .roles(roleName)
                 .build();
     }
 }

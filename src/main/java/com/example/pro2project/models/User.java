@@ -22,18 +22,15 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    // VAZBY (Relationships)
-
     @ManyToOne
     @JoinColumn(name = "role_id")
-    private Role role; // Každý uživatel má jednu roli (např. ROLE_USER)
+    private Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Note> notes; // Osobní poznámky uživatele k hráčům[cite: 4]
+    private List<Note> notes;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<WatchList> watchedSummoners; // Seznam sledovaných vyvolávačů[cite: 4]
+    private List<WatchList> watchedSummoners;
 
-    // Konstruktory
     public User() {}
 }

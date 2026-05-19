@@ -14,17 +14,14 @@ public class Participant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Vazba na zápas
     @ManyToOne
     @JoinColumn(name = "match_id")
     private Match match;
 
-    // Vazba na vyvolávače
     @ManyToOne
     @JoinColumn(name = "summoner_id")
     private Summoner summoner;
 
-    // Vazba na šampiona
     @ManyToOne
     @JoinColumn(name = "champion_id")
     private Champion champion;

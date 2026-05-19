@@ -31,14 +31,11 @@ public class AnalysisService {
         Summoner summoner = summonerRepository.findByPuuid(puuid.trim());
         if (summoner == null) return;
 
-        // 1. Získání pouze klasických her
         List<Participant> classicGames = participantRepository.findBySummoner(summoner).stream()
-//                .filter(p -> "CLASSIC".equalsIgnoreCase(p.getMatch().getGameMode()))
                 .toList();
 
         if (classicGames.isEmpty()) return;
 
-        // 2. Vytvoření reportu poskládáním z našich čistých metod
         AnalysisReport report = new AnalysisReport();
         report.setSummoner(summoner);
 
@@ -51,16 +48,11 @@ public class AnalysisService {
 
         analysisReportRepository.save(report);
 
-        // 3. Zpracování tagů (také odděleno pro přehlednost)
         assignTags(summoner, report);
         summonerRepository.save(summoner);
 
         System.out.println(">>> Report uložen pro " + summoner.getName() + " (Počet her: " + classicGames.size() + ")");
     }
-
-    // =================================================================================
-    // POMOCNÉ METODY PRO VÝPOČTY (Vše vrací unifikované skóre 0 - 100)
-    // =================================================================================
 
     private int calculateFarmingEfficiency(List<Participant> games) {
         double totalCsPerMin = 0;
@@ -78,7 +70,6 @@ public class AnalysisService {
         for (Participant p : games) {
             totalDamage += p.getTotalDamage();
         }
-        // Vrací čistý průměr, např. 24500
         return (int) (totalDamage / games.size());
     }
 
@@ -111,7 +102,6 @@ public class AnalysisService {
         for (Participant p : games) {
             totalVision += p.getVisionScore();
         }
-        // Vrací čistý průměr na hru, např. 35
         return totalVision / games.size();
     }
 
@@ -122,10 +112,6 @@ public class AnalysisService {
         }
         return (wins * 100) / games.size();
     }
-
-    // =================================================================================
-    // POMOCNÉ METODY PRO TAGY
-    // =================================================================================
 
     private void assignTags(Summoner summoner, AnalysisReport report) {
         if (summoner.getTags() == null) summoner.setTags(new ArrayList<>());

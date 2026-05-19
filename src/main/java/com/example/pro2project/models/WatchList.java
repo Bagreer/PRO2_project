@@ -16,11 +16,11 @@ public class WatchList {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user; // Který uživatel sleduje
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "summoner_id")
-    private Summoner summoner; // Kterého hráče sleduje
+    private Summoner summoner;
 
     public WatchList(int id) {
         this.id = id;

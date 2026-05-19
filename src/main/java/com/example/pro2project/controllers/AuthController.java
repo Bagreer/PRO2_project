@@ -26,13 +26,13 @@ public class AuthController {
 
     @GetMapping("/login")
     public String login() {
-        return "login"; // Zobrazí login.html
+        return "login";
     }
 
     @GetMapping("/register")
     public String registerForm(Model model) {
         model.addAttribute("user", new User());
-        return "register"; // Zobrazí register.html
+        return "register";
     }
 
     @PostMapping("/register")
@@ -44,10 +44,8 @@ public class AuthController {
 
         User user = new User();
         user.setUsername(username);
-        // ZAŠIFROVÁNÍ HESLA - kritické pro bezpečnost!
         user.setPassword(passwordEncoder.encode(password));
 
-        // Přiřadíme výchozí roli USER (předpokládáme, že v DB už existuje)
         Role defaultRole = roleRepository.findByName("USER");
         if (defaultRole == null) {
             defaultRole = new Role();

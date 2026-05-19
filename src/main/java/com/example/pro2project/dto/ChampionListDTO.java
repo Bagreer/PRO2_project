@@ -9,6 +9,6 @@ import java.util.Map;
 @Getter @Setter
 public class ChampionListDTO {
     private String version;
-    private Map<String, ChampionDataDTO> data; // Mapa, kde klíč je jméno (Aatrox)
+    private Map<String, ChampionDataDTO> data;
 }
 

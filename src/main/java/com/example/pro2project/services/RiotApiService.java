@@ -54,7 +54,6 @@ public class RiotApiService {
     }
 
     public String getPuuid(String gameName, String tagLine) {
-        // Pozor: Riot teď vyžaduje volání přes /account/v1/accounts/by-riot-id/
         String url = "https://europe.api.riotgames.com/riot/account/v1/accounts/by-riot-id/"
                 + gameName + "/" + tagLine + "?api_key=" + apiKey;
         System.out.println("url: " + url);
@@ -113,16 +112,10 @@ public class RiotApiService {
                 );
 
                 match.setGameCreation(dateTime);
-
-
                 match.getGameCreation();
-
-
-
                 match = matchRepository.save(match);
 
                 for (MatchDetailDTO.ParticipantDTO pDto : dto.getInfo().getParticipants()) {
-                    // 1. Zpracování vyvolávače (Summoner)
                     Summoner summoner = summonerRepository.findByPuuid(pDto.getPuuid());
                     if (summoner == null) {
                         summoner = new Summoner();
@@ -139,13 +132,11 @@ public class RiotApiService {
                     summoner.setSummonerLevel(pDto.getSummonerLevel());
                     summoner = summonerRepository.save(summoner);
 
-                    // 2. Zpracování šampiona (Champion)
-                    // Pro zjednodušení teď hledáme/vytváříme jen podle ID
                     Champion champion = championRepository.findByChampionId(pDto.getChampionId());
                     if (champion == null) {
                         champion = new Champion();
                         champion.setChampionId(pDto.getChampionId());
-                        champion.setName("ID: " + pDto.getChampionId()); // Dočasné jméno
+                        champion.setName("ID: " + pDto.getChampionId());
                         champion = championRepository.save(champion);
                     }
 
@@ -161,8 +152,8 @@ public class RiotApiService {
                     p.setWin(pDto.isWin());
 
                     p.setMatch(match);
-                    p.setSummoner(summoner); // Tady zmizí ten NULL v PARTICIPANTS
-                    p.setChampion(champion); // Tady zmizí ten NULL v PARTICIPANTS
+                    p.setSummoner(summoner);
+                    p.setChampion(champion);
 
                     participantRepository.save(p);
                 }
@@ -176,7 +167,6 @@ public class RiotApiService {
 
     @Transactional
     public void getChampFromDragon() {
-        // URL pro verzi 14.9.1 (Riot verze občas mění, ale tato je teď stabilní)
         String url = "https://ddragon.leagueoflegends.com/cdn/" + version + "/data/en_US/champion.json";
         System.out.println("Using URL: " + url);
 
@@ -186,17 +176,15 @@ public class RiotApiService {
                 for (ChampionDataDTO dto : response.getData().values()) {
                     int riotId = Integer.parseInt(dto.getKey());
 
-                    // Zkusíme, jestli už šampiona máme
                     Champion champion = championRepository.findByChampionId(riotId);
                     if (champion == null) {
                         champion = new Champion();
                         champion.setChampionId(riotId);
                     }
 
-                    champion.setName(dto.getId()); // "Aatrox"
-                    champion.setDescription(dto.getTitle()); // "the Darkin Blade"
+                    champion.setName(dto.getId());
+                    champion.setDescription(dto.getTitle());
 
-                    // Vezmeme první tag jako hlavní classu (např. "Fighter")
                     if (!dto.getTags().isEmpty()) {
                         champion.setChampionClass(dto.getTags().get(0));
                     }

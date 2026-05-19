@@ -7,7 +7,7 @@ import com.example.pro2project.services.RiotApiService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable; // PŘIDÁN IMPORT PRO DETAIL ZÁPASU
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -26,7 +26,7 @@ public class WebController {
     private final UserRepository userRepository;
     private final WatchListRepository watchListRepository;
     private final NoteRepository noteRepository;
-    private final MatchRepository matchRepository; // PŘIDÁNO: Repozitář pro zápasy
+    private final MatchRepository matchRepository;
 
     public WebController(SummonerRepository summonerRepository,
                          AnalysisReportRepository analysisReportRepository,
@@ -37,7 +37,7 @@ public class WebController {
                          UserRepository userRepository,
                          WatchListRepository watchListRepository,
                          NoteRepository noteRepository,
-                         MatchRepository matchRepository) { // PŘIDÁNO DO KONSTRUKTORU
+                         MatchRepository matchRepository) {
         this.summonerRepository = summonerRepository;
         this.analysisReportRepository = analysisReportRepository;
         this.riotApiService = riotApiService;
@@ -47,13 +47,11 @@ public class WebController {
         this.userRepository = userRepository;
         this.watchListRepository = watchListRepository;
         this.noteRepository = noteRepository;
-        this.matchRepository = matchRepository; // PŘIDÁNO DO KONSTRUKTORU
+        this.matchRepository = matchRepository;
     }
 
-    // Úvodní stránka s vyhledávacím polem - UPRAVENO PRO WATCHLIST A POZNÁMKY
     @GetMapping("/")
     public String index(Model model, Principal principal) {
-        // Pokud je uživatel přihlášený, vytáhneme jeho watchlist a poznámky
         if (principal != null) {
             User user = userRepository.findByUsername(principal.getName());
             if (user != null) {
@@ -66,25 +64,20 @@ public class WebController {
 
     @GetMapping("/search")
     public String searchPlayer(@RequestParam String name, @RequestParam String tag, Model model, Principal principal) {
-        // 1. Zkusíme, jestli už jsme ho náhodou nehledali dřív (je v DB)
         Summoner summoner = summonerRepository.findByName(name);
 
         if (summoner == null) {
             try {
-                // 2. Hráč v DB není -> jdeme pro něj do Riotu
                 String puuid = riotApiService.getPuuid(name, tag);
 
                 if (puuid != null) {
-                    // 3. Stáhneme mu zápasy (např. posledních 10)
                     List<String> matchIds = riotApiService.getMatchIds(puuid);
                     for (String id : matchIds) {
                         riotApiService.downloadAndSaveMatch(id);
                     }
 
-                    // 4. Spustíme tvou modularizovanou analýzu
                     analysisService.performAnalysis(puuid);
 
-                    // 5. Teď už ho v DB máme, tak si ho vytáhneme
                     summoner = summonerRepository.findByPuuid(puuid);
                 }
             } catch (Exception e) {
@@ -100,7 +93,6 @@ public class WebController {
             Note existingNote = noteRepository.findByUserAndSummoner(user, summoner);
             model.addAttribute("note", existingNote != null ? existingNote.getText() : "");
 
-            // Vytáhneme historii her (všech módů)
             List<Participant> recentGames = participantRepository.findBySummonerOrderById(summoner);
 
             model.addAttribute("summoner", summoner);
@@ -148,20 +140,18 @@ public class WebController {
         return "redirect:/search?name=" + (summoner != null ? summoner.getName() : "") + "&tag=EUNE";
     }
 
-    // PŘIDÁNO: Endpoint pro rozkliknutí detailu konkrétního zápasu
     @GetMapping("/match/{id}")
     public String matchDetail(@PathVariable Long id, Model model) {
         Match match = matchRepository.findById(id).orElse(null);
         if (match == null) {
-            return "redirect:/"; // Pokud zápas neexistuje, hodí nás to na hlavní stránku
+            return "redirect:/";
         }
 
-        // Vytáhneme všech 10 účastníků (particapantů), kteří v tomto zápase hráli
         List<Participant> participants = participantRepository.findByMatch(match);
 
         model.addAttribute("match", match);
         model.addAttribute("participants", participants);
-        return "match"; // Otevře match.html
+        return "match";
     }
 
     @PostMapping("/watchlist/delete")
@@ -170,15 +160,14 @@ public class WebController {
         Summoner summoner = summonerRepository.findById(summonerId).orElse(null);
 
         if (user != null && summoner != null) {
-            // Najdeme konkrétní položku ve watchlistu tohoto uživatele a smažeme ji
             List<WatchList> watchlist = watchListRepository.findByUser(user);
             for (WatchList item : watchlist) {
                 if (item.getSummoner().getId().equals(summonerId)) {
                     watchListRepository.delete(item);
-                    break; // Záznam smazán, můžeme vyskočit z cyklu
+                    break;
                 }
             }
         }
-        return "redirect:/"; // Vrátí nás zpět na pročištěnou hlavní stránku
+        return "redirect:/";
     }
 }

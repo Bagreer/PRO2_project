@@ -17,23 +17,20 @@ public class Summoner {
     private Long id;
 
     @Column(unique = true)
-    private String puuid; // Unikátní ID z Riot API pro identifikaci hráče[cite: 3, 10]
-
-    private String name; // Herní jméno vyvolávače
-
+    private String puuid;
+    private String name;
     private int summonerLevel;
     private String iconId;
 
-    // VAZBY (Relationships)
 
     @OneToMany(mappedBy = "summoner", cascade = CascadeType.ALL)
-    private List<Participant> matchHistory; // Výkony v konkrétních zápasech[cite: 4]
+    private List<Participant> matchHistory;
 
     @OneToMany(mappedBy = "summoner", cascade = CascadeType.ALL)
-    private List<AnalysisReport> reports; // Tvé vypočítané hloubkové analýzy
+    private List<AnalysisReport> reports;
 
     @OneToMany(mappedBy = "summoner")
-    private List<WatchList> followedByUsers; // Kteří uživatelé si tohoto hráče přidali[cite: 4]
+    private List<WatchList> followedByUsers;
 
     @ManyToMany
     @JoinTable(
@@ -44,7 +41,6 @@ public class Summoner {
 
     private List<Tag> tags = new java.util.ArrayList<>();
 
-    // Konstruktory
     public Summoner() {}
 
 }
