@@ -12,6 +12,7 @@ import com.example.pro2project.services.AnalysisService;
 import com.example.pro2project.services.RiotApiService;
 import jakarta.transaction.Transactional;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -24,21 +25,18 @@ public class DataInitializer implements CommandLineRunner {
     private final TagRepository tagRepository;
     private final UserRepository userRepository;
     private final RiotApiService riotApiService;
-    private final AnalysisService analysisService;
-    private final SummonerRepository summonerRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public DataInitializer(RoleRepository roleRepository,
                            TagRepository tagRepository,
                            UserRepository userRepository,
                            RiotApiService riotApiService,
-                           AnalysisService analysisService,
-                           SummonerRepository summonerRepository) {
+                           PasswordEncoder passwordEncoder) {
         this.roleRepository = roleRepository;
         this.tagRepository = tagRepository;
         this.userRepository = userRepository;
         this.riotApiService = riotApiService;
-        this.analysisService = analysisService;
-        this.summonerRepository = summonerRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -57,6 +55,18 @@ public class DataInitializer implements CommandLineRunner {
 
         riotApiService.getChampFromDragon();
 
+        if (userRepository.findByUsername("admin") == null) {
+            User admin = new User();
+            admin.setUsername("admin");
+            // Heslo musíme zašifrovat přes bcrypt, jinak by tě Spring Security nepustil dál
+            admin.setPassword(passwordEncoder.encode("admin"));
+
+            userRepository.save(admin);
+            System.out.println(">>>> 👤 Výchozí uživatel 'admin' s heslem 'admin' byl úspěšně vytvořen.");
+        }
+
         System.out.println(">>> Backend připraven, čekám na vyhledávání...");
+
+
     }
 }
