@@ -58,7 +58,6 @@ public class DataInitializer implements CommandLineRunner {
         if (userRepository.findByUsername("admin") == null) {
             User admin = new User();
             admin.setUsername("admin");
-            // Heslo musíme zašifrovat přes bcrypt, jinak by tě Spring Security nepustil dál
             admin.setPassword(passwordEncoder.encode("admin"));
 
             userRepository.save(admin);
